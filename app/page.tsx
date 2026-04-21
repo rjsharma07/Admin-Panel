@@ -46,7 +46,7 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black tracking-tight bg-gradient-to-r from-slate-900 to-slate-600 bg-clip-text text-transparent">
-            Dashboard Overview
+            Dashboard
           </h1>
           <p className="text-slate-500 font-medium mt-1">Operational Command Center & Analytics</p>
         </div>
@@ -61,21 +61,21 @@ export default function Dashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <StatCard
-          title="Total Members"
+          title="Total Users"
           value={stats.totalUsers}
           icon={<UserIcon />}
           color="indigo"
           trend="+12% from last month"
         />
         <StatCard
-          title="Active Sessions"
+          title="Active Users"
           value={stats.activeUsers}
           icon={<ActiveIcon />}
           color="emerald"
           trend="+5.4% this week"
         />
         <StatCard
-          title="Cards Issued"
+          title="Scratch Cards Issued"
           value={stats.scratchCardsSent}
           icon={<CardIcon />}
           color="blue"
@@ -157,7 +157,7 @@ function StatCard({ title, value, icon, color }: any) {
   };
 
   return (
-    <div 
+    <div
       className="group relative bg-white p-8 rounded-[2rem] border border-slate-200 shadow-[0_1px_3px_rgba(0,0,0,0.1)] hover:translate-y-[-8px] hover:shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] hover:border-indigo-400/30 transition-all duration-400 cubic-bezier-[0.4,0,0.2,1] will-change-transform overflow-hidden cursor-default flex flex-col h-[200px]"
     >
       <div className="relative z-10 flex flex-col h-full">

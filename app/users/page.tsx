@@ -247,8 +247,8 @@ export default function UsersPage() {
     <div className="p-8">
       <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Organization Members</h1>
-          <p className="text-slate-500 font-medium mt-1">Manage documents, rewards, and verify system users.</p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Users</h1>
+          <p className="text-slate-500 font-medium mt-1">Manage Users, Documents and Rewards.</p>
         </div>
         <div className="flex items-center gap-4">
           {/* Search Bar */}
@@ -280,7 +280,7 @@ export default function UsersPage() {
       </div>
 
       <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
-        <UserTable 
+        <UserTable
           users={users}
           isLoading={isLoading}
           sortBy={sortBy}
@@ -330,7 +330,7 @@ export default function UsersPage() {
               <div>
                 <h2 className="text-xl font-bold text-slate-900">{isEditing ? "Edit User" : "Create New User"}</h2>
                 <p className="text-sm text-slate-500 mt-1">
-                  {isEditing ? "Modify user details below." : "Add a new member to your organization."}
+                  {isEditing ? "Modify user details." : "Add a new user."}
                 </p>
               </div>
               <button

@@ -141,7 +141,7 @@ export default function UserTable({
                     <button
                       onClick={() => handleEditClick(user)}
                       className="p-2 text-slate-500 bg-slate-50 border border-slate-100 rounded-lg hover:text-blue-600 hover:bg-blue-50 hover:border-blue-100 transition-all flex items-center justify-center shadow-sm"
-                      title="Edit Profile"
+                      title="Edit User"
                     >
                       <Edit2 size={16} strokeWidth={2.5} />
                     </button>
