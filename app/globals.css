@@ -9,6 +9,12 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  --animate-shimmer: shimmer 4s infinite;
+
+  @keyframes shimmer {
+    0% { transform: translateX(-150%) rotate(45deg); }
+    100% { transform: translateX(150%) rotate(45deg); }
+  }
 }
 
 body {
@@ -58,3 +64,4 @@ input[type="button"] {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #cbd5e1;
 }
+

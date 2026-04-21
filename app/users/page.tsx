@@ -3,12 +3,17 @@
 import { useEffect, useState } from "react";
 import ConfirmModal from "@/components/ConfirmModal";
 import Toast, { ToastType } from "@/components/Toast";
+import PolicyUploadModal from "@/components/PolicyUploadModal";
+import UserTable from "@/components/UserTable";
 
 export default function UsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [selectedUserForUpload, setSelectedUserForUpload] = useState<any>(null);
 
+  // Scratch Card States
   const [selectedUserForCard, setSelectedUserForCard] = useState<any>(null);
   const [isScratchCardModalOpen, setIsScratchCardModalOpen] = useState(false);
   const [cardAmount, setCardAmount] = useState("");
@@ -208,7 +213,6 @@ export default function UsersPage() {
         });
         fetchUsers();
       } else {
-        // Handle specific API errors
         if (data.error === "Email Already Exists") {
           setFormError("This email address is already registered.");
         } else if (data.error === "Phone Number Already Exists") {
@@ -244,13 +248,13 @@ export default function UsersPage() {
       <div className="mb-8 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Organization Members</h1>
-          <p className="text-slate-500 font-medium mt-1">Manage, verify, and monitor your system users.</p>
+          <p className="text-slate-500 font-medium mt-1">Manage documents, rewards, and verify system users.</p>
         </div>
         <div className="flex items-center gap-4">
           {/* Search Bar */}
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <svg className="w-4 h-4 text-slate-400 group-focus-within:text-emerald-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -276,140 +280,23 @@ export default function UsersPage() {
       </div>
 
       <div className="bg-white rounded-[2rem] border border-slate-200 overflow-hidden shadow-sm">
-        {isLoading ? (
-          <div className="py-20 text-center">
-            <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-r-transparent mb-4"></div>
-            <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Syndicating User Data...</p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto custom-scrollbar">
-            <table className="w-full text-left min-w-[800px] border-collapse">
-              <thead>
-                <tr className="border-b border-slate-100 bg-slate-50/30">
-                  <th
-                    onClick={() => handleSort("name")}
-                    className="sticky left-0 z-20 bg-white/95 backdrop-blur-sm px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] cursor-pointer hover:bg-slate-100 transition-colors group shadow-[4px_0_10px_-4px_rgba(0,0,0,0.05)]"
-                  >
-                    <div className="flex items-center gap-2">
-                      Full Name
-                      {sortBy === "name" && (
-                        <span className="text-indigo-600">{order === "asc" ? "↑" : "↓"}</span>
-                      )}
-                      {sortBy !== "name" && (
-                        <span className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
-                      )}
-                    </div>
-                  </th>
-                  <th
-                    onClick={() => handleSort("email")}
-                    className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] cursor-pointer hover:bg-slate-50/50 transition-colors group"
-                  >
-                    <div className="flex items-center gap-2">
-                      Email
-                      {sortBy === "email" && (
-                        <span className="text-indigo-600">{order === "asc" ? "↑" : "↓"}</span>
-                      )}
-                      {sortBy !== "email" && (
-                        <span className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
-                      )}
-                    </div>
-                  </th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Phone</th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Role</th>
-                  <th className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em]">Status</th>
-                  <th
-                    onClick={() => handleSort("createdAt")}
-                    className="px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] cursor-pointer hover:bg-slate-50/50 transition-colors group text-right"
-                  >
-                    <div className="flex items-center justify-end gap-2">
-                      Joined Date
-                      {sortBy === "createdAt" && (
-                        <span className="text-indigo-600">{order === "asc" ? "↑" : "↓"}</span>
-                      )}
-                      {sortBy !== "createdAt" && (
-                        <span className="text-slate-300 opacity-0 group-hover:opacity-100 transition-opacity">↕</span>
-                      )}
-                    </div>
-                  </th>
-                  <th className="sticky right-0 z-20 bg-white/95 backdrop-blur-sm px-6 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] text-right shadow-[-4px_0_10px_-4px_rgba(0,0,0,0.05)]">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50">
-                {users?.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="px-6 py-12 text-center text-slate-400 italic">
-                      No matching members found.
-                    </td>
-                  </tr>
-                ) : (
-                  users?.map((user) => (
-                    <tr key={user._id} className="hover:bg-slate-50/40 transition-colors group">
-                      <td className="sticky left-0 z-10 bg-white/95 backdrop-blur-sm px-6 py-4.5 text-sm font-bold text-slate-900 shadow-[4px_0_10px_-4px_rgba(0,0,0,0.05)] group-hover:bg-slate-50/80 transition-colors">{user.name}</td>
-                      <td className="px-6 py-4.5 text-sm text-slate-500 font-medium">{user.email}</td>
-                      <td className="px-6 py-4.5 text-xs text-slate-400 font-bold tracking-tight">{user.phoneNumber || "—"}</td>
-                      <td className="px-6 py-4.5">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-wider">
-                          {user.role}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4.5">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${user.status === "Active"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-100"
-                            : "bg-slate-50 text-slate-500 border-slate-100"
-                          }`}>
-                          {user.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4.5 text-right">
-                        <span className="text-xs text-slate-400 font-bold">
-                          {user.createdAt ? new Date(user.createdAt).toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric'
-                          }) : "—"}
-                        </span>
-                      </td>
-                      <td className="sticky right-0 z-10 bg-white/95 backdrop-blur-sm px-6 py-4.5 text-right shadow-[-4px_0_10px_-4px_rgba(0,0,0,0.05)] bg-slate-50/5 hover:bg-slate-50/80 transition-colors">
-                        <div className="flex justify-end gap-1.5 opacity-100 transition-opacity">
-                          <button
-                            onClick={() => {
-                              setSelectedUserForCard(user);
-                              setIsScratchCardModalOpen(true);
-                            }}
-                            className="p-2 text-indigo-600 bg-indigo-50 border border-indigo-100 rounded-lg hover:bg-indigo-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
-                            title="Scratch Card"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => handleEditClick(user)}
-                            className="p-2 text-slate-500 bg-slate-50 border border-slate-100 rounded-lg hover:text-blue-600 hover:bg-blue-50 hover:border-blue-100 transition-all flex items-center justify-center shadow-sm"
-                            title="Edit Profile"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user._id)}
-                            className="p-2 text-slate-400 bg-slate-50 border border-slate-100 rounded-lg hover:text-red-600 hover:bg-red-50 hover:border-red-100 transition-all flex items-center justify-center shadow-sm"
-                            title="Delete User"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <UserTable 
+          users={users}
+          isLoading={isLoading}
+          sortBy={sortBy}
+          order={order}
+          handleSort={handleSort}
+          handleEditClick={handleEditClick}
+          handleDelete={handleDelete}
+          onIssueReward={(user) => {
+            setSelectedUserForCard(user);
+            setIsScratchCardModalOpen(true);
+          }}
+          onUploadPolicy={(user) => {
+            setSelectedUserForUpload(user);
+            setIsUploadModalOpen(true);
+          }}
+        />
 
         {/* Pagination Footer */}
         <div className="px-8 py-5 flex items-center justify-between">
@@ -662,7 +549,6 @@ export default function UsersPage() {
                       setIsScratchCardModalOpen(false);
                       setCardAmount("");
                       showToast(`Successfully issued $${cardAmount} reward! Code: ${data.scratchCard.code}`, "success");
-                      fetch("/api/stats"); // Background refresh
                     } else {
                       showToast(data.message || data.error || "Failed to generate card", "error");
                     }
@@ -688,6 +574,7 @@ export default function UsersPage() {
           </div>
         </div>
       )}
+
       {/* Confirmation Modal */}
       <ConfirmModal
         {...confirmModal}
@@ -701,6 +588,15 @@ export default function UsersPage() {
           onClose={() => setToast(prev => ({ ...prev, show: false }))}
         />
       )}
+
+      <PolicyUploadModal
+        isOpen={isUploadModalOpen}
+        onClose={() => setIsUploadModalOpen(false)}
+        userId={selectedUserForUpload?._id || ""}
+        onSave={(data: any) => {
+          showToast(`Policy for ${selectedUserForUpload?.name} uploaded successfully!`, "success");
+        }}
+      />
     </div>
   );
 }

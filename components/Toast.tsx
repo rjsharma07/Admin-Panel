@@ -15,19 +15,25 @@ export default function Toast({ message, type, onClose, duration = 4000 }: Toast
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const step = 100 / (duration / 10);
+    const startTime = Date.now();
     const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev <= 0) {
-          clearInterval(interval);
-          onClose();
-          return 0;
-        }
-        return prev - step;
-      });
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
+      setProgress(remaining);
+      
+      if (remaining <= 0) {
+        clearInterval(interval);
+      }
     }, 10);
 
-    return () => clearInterval(interval);
+    const timer = setTimeout(() => {
+      onClose();
+    }, duration);
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timer);
+    };
   }, [duration, onClose]);
 
   const isSuccess = type === 'success';
